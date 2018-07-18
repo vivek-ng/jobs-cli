@@ -3,57 +3,58 @@
 let program = require('commander');
 
 let redis = require("redis"),
-    client = redis.createClient();
+	client = redis.createClient();
 
-    client.on("error", function (err) {
-    console.log("Error " + err);
+client.on("error", function(err) {
+	console.log("Error " + err);
 });
 
 
-// client.set('company' , 'amazon',redis.print);
-// console.log('company',redis.print);
-// client.quit();
+program
+	.command('addInterview <company> <status> <deadline> [notes]')
+	.alias('add')
+	.action((company, status, deadline, notes) => {
+		let companyDetails = {};
+		companyDetails.status = status;
+		companyDetails.deadline = deadline;
+		companyDetails.notes = notes;
 
+		client.hset("interviewDetails", company, JSON.stringify(companyDetails), redis.print);
 
-// function addCompany(){
+	})
+	.parse(process.argv)
 
-// }
-
-// client.hset("test" , "amazon" ,"bakwas", redis.print);
-// client.hset("test" , "google" ,"coding", redis.print);
-// client.hkeys("test", (err , replies) => {
-// 	replies.forEach((company) => {
-// 		console.log(company)
-// 	})
-// })
 
 program
-     .arguments('<company>')
-     .option('-s , --status [status]', 'status of the interview process')
-     .option('-d , --deadline [deadline]', 'deadline of the company')
-     .option('-n, --notes [notes]' , 'specific notes for the company')
-     .action(function(req, opts){
-     	console.log(req);
-     	console.log(opts.deadline); 
-     	let companyDetails = {};
-     	companyDetails.status = opts.status;
-     	companyDetails.deadline = opts.deadline;
-     	companyDetails.notes = opts.notes;
+	.command('getDetail <company>')
+	.alias('get')
+	.description('get the interview details of a company')
+	.action((company) => {
+		console.log(company);
+		client.hget("interviewDetails", company, (err, res) => {
+			console.log(res);
+		})
+	});
 
-     	client.hset("interviewDetails", req, JSON.stringify(companyDetails), redis.print);
-
-     })
-     .parse(process.argv)
+program.parse(process.argv);
 
 
-   program
-         .command('getDetail <company>')
-         .alias('get')
-         .description('get the interview details of a company')
-         .action((company) => {
-         	console.log(company);
-         });
+program
+	.command('getStatusBy <status>')
+	.alias('getStatus')
+	.description('get the list of interview details by status')
+	.action((status) => {
+		console.log(status);
+		client.hgetall("interviewDetails", (err, res) => {
+			for (let prop in res) {
+				let gg = JSON.parse(res[prop]);
+				if (gg.hasOwnProperty('status') && gg['status'].includes(status)) {
+					console.log(prop);
+					console.log(res[prop]);
+				}
+			}
 
-         program.parse(process.argv);
+		})
+	});
 
-       //  client.quit();
+program.parse(process.argv);
