@@ -1,0 +1,14 @@
+{
+  "name": "jobs-cli",
+  "version": "1.0.0",
+  "description": "A command line tool to help you track your jobs application status!!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Vivek",
+  "license": "ISC",
+  "bin": {
+   "jobs-cli": "./index.js"
+  }
+}
