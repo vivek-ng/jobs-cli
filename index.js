@@ -44,3 +44,16 @@ program
 
      })
      .parse(process.argv)
+
+
+   program
+         .command('getDetail <company>')
+         .alias('get')
+         .description('get the interview details of a company')
+         .action((company) => {
+         	console.log(company);
+         });
+
+         program.parse(process.argv);
+
+       //  client.quit();
