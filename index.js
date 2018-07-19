@@ -58,3 +58,27 @@ program
 	});
 
 program.parse(process.argv);
+
+
+program
+	.command('getIntervewsByDeadline <deadline>')
+	.alias('getd')
+	.description('get the list of interviews which have a deadline before the specified date ')
+	.action((deadline) => {
+		client.hgetall("interviewDetails", (err, res) => {
+			for (let prop in res) {
+				let gg = JSON.parse(res[prop]);
+				if (gg.hasOwnProperty("deadline")) {
+					let dd = Date.parse(deadline);
+					let curr = Date.parse(gg['deadline']);
+					console.log(dd);
+					console.log(curr);
+					if (curr <= dd) {
+						console.log(prop);
+						console.log(res[prop]);
+					}
+				}
+			}
+		})
+	});
+program.parse(process.argv);
